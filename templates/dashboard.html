@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Dashboard</p>
+    <h2>FraudShield fusion control center</h2>
+    <p>Monitor scans, watchlist hits, incident reports, and external reputation signals in one place.</p>
+  </div>
+  <a class="quick-card inline-card" href="{{ url_for('scan') }}">Run a new scan</a>
+</section>
+
+<section class="stats-grid">
+  <div class="stat-card"><span>Total scans</span><strong>{{ stats.total_scans }}</strong></div>
+  <div class="stat-card"><span>Critical scans</span><strong>{{ stats.critical_scans }}</strong></div>
+  <div class="stat-card"><span>Watchlist items</span><strong>{{ stats.total_watchlist }}</strong></div>
+  <div class="stat-card"><span>Incident reports</span><strong>{{ stats.total_reports }}</strong></div>
+</section>
+
+<section class="quick-grid">
+  <a class="quick-card" href="{{ url_for('scan') }}"><h3>Multi-engine scan</h3><p>Message, URL, email, payment, password, bulk analysis, and URL reputation checks.</p></a>
+  <a class="quick-card" href="{{ url_for('watchlist') }}"><h3>Watchlist</h3><p>Keep suspicious numbers, domains, UPIs, and senders locally flagged.</p></a>
+  <a class="quick-card" href="{{ url_for('reports') }}"><h3>Incident reporting</h3><p>Record what happened and export a CSV for review.</p></a>
+  <a class="quick-card" href="{{ url_for('resources') }}"><h3>Helpful resources</h3><p>Recovery notes and reporting pointers for quick action.</p></a>
+</section>
+
+<section class="content-grid">
+  <div class="panel">
+    <div class="panel-head">
+      <h3>Risk summary</h3>
+      <a class="text-link" href="{{ url_for('scans_export') }}">Export scans</a>
+    </div>
+    <div class="mini-grid">
+      <div class="mini-card"><span>Critical</span><strong>{{ summary.critical or 0 }}</strong></div>
+      <div class="mini-card"><span>High</span><strong>{{ summary.high or 0 }}</strong></div>
+      <div class="mini-card"><span>Suspicious</span><strong>{{ summary.suspicious or 0 }}</strong></div>
+      <div class="mini-card"><span>Low</span><strong>{{ summary.low or 0 }}</strong></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Top threat types</h3>
+    <div class="bars">
+      {% for row in threat_rows %}
+      <div class="bar-row">
+        <div class="bar-label">{{ row.threat_type }}</div>
+        <div class="bar-track"><div class="bar-fill" style="width: {{ (row.total * 100 / (stats.total_scans or 1))|round(0) }}%"></div></div>
+        <div class="bar-value">{{ row.total }}</div>
+      </div>
+      {% else %}
+      <p class="muted">No scans yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="content-grid">
+  <div class="panel">
+    <h3>Recent scans</h3>
+    <div class="report-list">
+      {% for row in recent_scans %}
+      <article class="report-item">
+        <div>
+          <span class="badge info">{{ row.scan_kind }}</span>
+          <h4>{{ row.threat_type }}</h4>
+          <p class="muted">{{ row.label }} • Score {{ row.score }}</p>
+          <p>{{ row.input_text[:120] }}{% if row.input_text|length > 120 %}...{% endif %}</p>
+          <p class="muted">{{ row.created_at }}</p>
+        </div>
+      </article>
+      {% else %}
+      <p>No scans recorded yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="panel">
+    <h3>Recent reports</h3>
+    <div class="report-list">
+      {% for row in recent_reports %}
+      <article class="report-item">
+        <div>
+          <span class="badge info">{{ row.report_type }}</span>
+          <h4>{{ row.subject }}</h4>
+          <p class="muted">Severity: {{ row.severity }} • Status: {{ row.status }}</p>
+          <p class="muted">{{ row.created_at }}</p>
+        </div>
+      </article>
+      {% else %}
+      <p>No reports submitted yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h3>Watchlist snapshot</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Type</th><th>Value</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        {% for row in watchlist_rows %}
+        <tr>
+          <td>{{ row.item_type }}</td>
+          <td>{{ row.item_value }}</td>
+          <td>{% if row.enabled %}Enabled{% else %}Disabled{% endif %}</td>
+          <td>{{ row.notes or '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">No watchlist items yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

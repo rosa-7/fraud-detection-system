@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Local watchlist</p>
+    <h2>Keep suspicious items flagged</h2>
+    <p>Add domains, senders, phone numbers, UPIs, or keywords that should raise the risk score automatically.</p>
+  </div>
+</section>
+
+<section class="content-grid">
+  <div class="panel">
+    <h3>Add item</h3>
+    <form method="POST" class="form-grid">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="action" value="add">
+      <label>Type</label>
+      <select name="item_type" required>
+        <option value="">Select type</option>
+        <option value="keyword">Keyword</option>
+        <option value="domain">Domain</option>
+        <option value="email">Email</option>
+        <option value="phone">Phone</option>
+        <option value="upi">UPI</option>
+      </select>
+      <label>Value</label>
+      <input type="text" name="item_value" placeholder="e.g. phishing site, bank-support, 9876543210" required>
+      <label>Notes</label>
+      <textarea name="notes" rows="4" placeholder="Why this item is suspicious"></textarea>
+      <button type="submit">Add to watchlist</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h3>Items</h3>
+    <div class="report-list">
+      {% for row in rows %}
+      <article class="report-item">
+        <div class="watchlist-head">
+          <div>
+            <span class="badge info">{{ row.item_type }}</span>
+            <h4>{{ row.item_value }}</h4>
+            <p class="muted">{{ row.notes or 'No notes added.' }}</p>
+            <p class="muted">Added {{ row.created_at }}</p>
+          </div>
+          <div class="watchlist-actions">
+            <form method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="action" value="toggle">
+              <input type="hidden" name="item_id" value="{{ row.id }}">
+              <button type="submit">{% if row.enabled %}Disable{% else %}Enable{% endif %}</button>
+            </form>
+            <form method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <input type="hidden" name="action" value="delete">
+              <input type="hidden" name="item_id" value="{{ row.id }}">
+              <button type="submit" class="danger-btn">Delete</button>
+            </form>
+          </div>
+        </div>
+      </article>
+      {% else %}
+      <p>No watchlist items yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

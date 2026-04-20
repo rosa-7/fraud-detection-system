@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Incident response</p>
+    <h2>Reports and export</h2>
+    <p>Capture scam attempts, fake support messages, fraudulent payment requests, and account abuse.</p>
+  </div>
+  <a class="quick-card inline-card" href="{{ url_for('reports_export') }}">Download reports CSV</a>
+</section>
+
+<section class="content-grid">
+  <div class="panel">
+    <h3>Submit report</h3>
+    <form method="POST" class="form-grid">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label>Report type</label>
+      <select name="report_type" required>
+        <option value="">Select type</option>
+        <option>Phishing</option>
+        <option>Social Engineering</option>
+        <option>Fake Support</option>
+        <option>UPI Fraud</option>
+        <option>OTP Scam</option>
+        <option>Account Takeover</option>
+        <option>Data Leak</option>
+        <option>Other</option>
+      </select>
+
+      <label>Severity</label>
+      <select name="severity" required>
+        <option>Low</option>
+        <option selected>Medium</option>
+        <option>High</option>
+        <option>Critical</option>
+      </select>
+
+      <label>Subject</label>
+      <input type="text" name="subject" placeholder="Short title" required>
+
+      <label>Details</label>
+      <textarea name="details" rows="9" placeholder="Explain what happened" required></textarea>
+
+      <label>Contact</label>
+      <input type="text" name="contact" placeholder="Phone or email, optional">
+
+      <button type="submit">Save report</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h3>Recent reports</h3>
+    <div class="report-list">
+      {% for row in rows %}
+      <article class="report-item">
+        <div>
+          <span class="badge info">{{ row.report_type }}</span>
+          <h4>{{ row.subject }}</h4>
+          <p class="muted">Severity: {{ row.severity }} • Status: {{ row.status }}</p>
+          <p>{{ row.created_at }}</p>
+          <p class="muted">{{ row.details[:170] }}{% if row.details|length > 170 %}...{% endif %}</p>
+        </div>
+      </article>
+      {% else %}
+      <p>No reports submitted yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-layout">
+  <div class="hero-panel">
+    <p class="eyebrow">Create account</p>
+    <h2>Start protecting people from digital scams</h2>
+    <p>Track incidents, keep a local watchlist, and generate safe response guidance for suspicious activity.</p>
+  </div>
+  <div class="auth-card">
+    <h3>Register</h3>
+    <form method="POST" class="form-grid">
+      <label>Username</label>
+      <input type="text" name="username" autocomplete="username" required>
+      <label>Password</label>
+      <input type="password" name="password" autocomplete="new-password" required>
+      <button type="submit">Create account</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

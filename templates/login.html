@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-layout">
+  <div class="hero-panel">
+    <p class="eyebrow">Secure access</p>
+    <h2>Welcome back</h2>
+    <p>Scan suspicious messages, links, payment prompts, email content, and suspicious passwords from a single dashboard.</p>
+    <div class="hero-badges">
+      <span>Phishing</span>
+      <span>Payment fraud</span>
+      <span>Privacy leaks</span>
+    </div>
+  </div>
+  <div class="auth-card">
+    <h3>Login</h3>
+    <form method="POST" class="form-grid">
+      <label>Username</label>
+      <input type="text" name="username" autocomplete="username" required>
+      <label>Password</label>
+      <input type="password" name="password" autocomplete="current-password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p class="muted">Demo account: admin / Admin@1234</p>
+  </div>
+</section>
+{% endblock %}

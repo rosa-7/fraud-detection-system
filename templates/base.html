@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>FraudShield Fusion</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script>
+    (function () {
+      const stored = localStorage.getItem('fraudshield-theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = stored || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div>
+        <h1>FraudShield Fusion</h1>
+        <p>Fraud detection, privacy checks, reputation checks, and recovery guidance</p>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('scan') }}">Scan</a>
+        <a href="{{ url_for('watchlist') }}">Watchlist</a>
+        <a href="{{ url_for('reports') }}">Reports</a>
+        <a href="{{ url_for('awareness') }}">Awareness</a>
+        <a href="{{ url_for('recovery') }}">Recovery</a>
+        <a href="{{ url_for('checklist') }}">Checklist</a>
+        <a href="{{ url_for('resources') }}">Resources</a>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <span class="theme-toggle-icon">☾</span>
+          <span class="theme-toggle-text">Dark mode</span>
+        </button>
+        <span class="user-pill">{{ session.get('username') }}</span>
+        <form method="POST" action="{{ url_for('logout') }}" class="inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="logout-link">Logout</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <span class="theme-toggle-icon">☾</span>
+          <span class="theme-toggle-text">Dark mode</span>
+        </button>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    (function () {
+      const toggle = document.getElementById('themeToggle');
+      if (!toggle) return;
+
+      function updateToggle(theme) {
+        const isDark = theme === 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('fraudshield-theme', theme);
+        const icon = toggle.querySelector('.theme-toggle-icon');
+        const text = toggle.querySelector('.theme-toggle-text');
+        if (icon) icon.textContent = isDark ? '☀' : '☾';
+        if (text) text.textContent = isDark ? 'Light mode' : 'Dark mode';
+        toggle.setAttribute('aria-pressed', String(isDark));
+      }
+
+      updateToggle(document.documentElement.getAttribute('data-theme') || 'light');
+
+      toggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        updateToggle(current === 'dark' ? 'light' : 'dark');
+      });
+    })();
+  </script>
+</body>
+</html>
