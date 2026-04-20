@@ -2,6 +2,9 @@
 
 FraudShield Fusion is a Flask + SQLite digital fraud defense platform for phishing, scam, and online fraud awareness.
 
+## Problem Statement
+Online fraud and phishing attacks are increasing rapidly. This system helps users identify suspicious messages and URLs by analyzing content and assigning a risk score.
+
 ## Features
 - Multi-engine detection for messages, URLs, email content, payment requests, passwords, and bulk text
 - Privacy leak detection for Aadhaar, PAN, card-like numbers, bank details, OTP requests, and remote-access scams
